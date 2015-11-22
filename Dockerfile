@@ -6,9 +6,13 @@ RUN curl -sSL https://bintray.com/artifact/download/vertx/downloads/vert.x-$VERT
 ENV PATH /usr/share/vert.x-$VERTX_VERSION/bin:$PATH
 
 ENV REST_STORAGE_VERSION 1.2.3
-RUN curl -sL http://search.maven.org/remotecontent?filepath=li/chee/vertx/rest-storage/$REST_STORAGE_VERSION/rest-storage-$REST_STORAGE_VERSION-mod.zip -o /usr/lib/rest-storage-$REST_STORAGE_VERSION-mod.zip
+RUN curl -sL http://search.maven.org/remotecontent?filepath=li/chee/vertx/rest-storage/$REST_STORAGE_VERSION/rest-storage-$REST_STORAGE_VERSION-mod.zip -o /usr/lib/rest-storage-mod.zip
+
+RUN useradd -ms /bin/bash reststorage
+USER reststorage
+WORKDIR /home/reststorage
 
 # the port where the rest-storage will listen on
 EXPOSE 8989
 
-CMD ["vertx", "runzip", "/usr/lib/rest-storage-1.2.3-mod.zip"]
+CMD ["vertx", "runzip", "/usr/lib/rest-storage-mod.zip"]
