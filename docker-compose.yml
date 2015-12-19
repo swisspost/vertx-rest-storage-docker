@@ -1,0 +1,5 @@
+rest-storage:
+  build: .
+  ports:
+   - "8989:8989"
+
