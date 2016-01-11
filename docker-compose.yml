@@ -1,5 +1,15 @@
-rest-storage:
+rest-storage-filesystem:
   build: .
   ports:
    - "8989:8989"
-
+rest-storage-redis:
+ build: .
+ command: vertx runzip /usr/lib/vertx/rest-storage-mod.zip -conf /usr/lib/vertx/rest-storage-redis-conf.json
+ ports:
+   - "8989:8989"
+ links:
+   - redis
+redis:
+ image: redis:3
+ ports:
+   - "6379:6379"
