@@ -2,18 +2,19 @@ FROM java:8
 MAINTAINER florian kammermann "florian@kammermann.me"
 
 ENV VERTX_VERSION 2.1.6
-RUN curl -sSL https://bintray.com/artifact/download/vertx/downloads/vert.x-$VERTX_VERSION.tar.gz | tar xzf - -C /usr/share/
-RUN mkdir /usr/share/vert.x-$VERTX_VERSION/sys-mods
+RUN curl -sSL https://bintray.com/artifact/download/vertx/downloads/vert.x-$VERTX_VERSION.tar.gz | tar xzf - -C /usr/share/ && \
+mkdir /usr/share/vert.x-$VERTX_VERSION/sys-mods
 ENV PATH /usr/share/vert.x-$VERTX_VERSION/bin:$PATH
 
 ENV REST_STORAGE_VERSION 1.2.3
-RUN mkdir /usr/lib/vertx
-RUN curl -sL http://search.maven.org/remotecontent?filepath=li/chee/vertx/rest-storage/$REST_STORAGE_VERSION/rest-storage-$REST_STORAGE_VERSION-mod.zip -o /usr/lib/vertx/rest-storage-mod.zip
+RUN mkdir /usr/lib/vertx && \
+curl -sL http://search.maven.org/remotecontent?filepath=li/chee/vertx/rest-storage/$REST_STORAGE_VERSION/rest-storage-$REST_STORAGE_VERSION-mod.zip -o /usr/lib/vertx/rest-storage-mod.zip
 
 ENV MOD_REDIS_VERSION 1.1.3
-RUN curl -sL http://search.maven.org/remotecontent?filepath=io/vertx/mod-redis/$MOD_REDIS_VERSION/mod-redis-$MOD_REDIS_VERSION-mod.zip \
-    -o /usr/share/vert.x-$VERTX_VERSION/sys-mods/mod-redis-mod.zip && \
-    chmod 755 /usr/share/vert.x-$VERTX_VERSION/sys-mods/mod-redis-mod.zip
+RUN mkdir /usr/share/vert.x-$VERTX_VERSION/sys-mods/io.vertx~mod-redis~$MOD_REDIS_VERSION && \
+curl -sL http://search.maven.org/remotecontent?filepath=io/vertx/mod-redis/$MOD_REDIS_VERSION/mod-redis-$MOD_REDIS_VERSION-mod.zip -o mod-redis-mod.zip && \
+unzip mod-redis-mod.zip -d /usr/share/vert.x-$VERTX_VERSION/sys-mods/io.vertx~mod-redis~$MOD_REDIS_VERSION && \
+rm mod-redis-mod.zip
 
 COPY redis-conf.json /usr/lib/vertx/rest-storage-redis-conf.json
 
