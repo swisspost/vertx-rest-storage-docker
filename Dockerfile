@@ -3,10 +3,19 @@ MAINTAINER florian kammermann "florian@kammermann.me"
 
 ENV VERTX_VERSION 2.1.6
 RUN curl -sSL https://bintray.com/artifact/download/vertx/downloads/vert.x-$VERTX_VERSION.tar.gz | tar xzf - -C /usr/share/
+RUN mkdir /usr/share/vert.x-$VERTX_VERSION/sys-mods
 ENV PATH /usr/share/vert.x-$VERTX_VERSION/bin:$PATH
 
 ENV REST_STORAGE_VERSION 1.2.3
-RUN curl -sL http://search.maven.org/remotecontent?filepath=li/chee/vertx/rest-storage/$REST_STORAGE_VERSION/rest-storage-$REST_STORAGE_VERSION-mod.zip -o /usr/lib/rest-storage-mod.zip
+RUN mkdir /usr/lib/vertx
+RUN curl -sL http://search.maven.org/remotecontent?filepath=li/chee/vertx/rest-storage/$REST_STORAGE_VERSION/rest-storage-$REST_STORAGE_VERSION-mod.zip -o /usr/lib/vertx/rest-storage-mod.zip
+
+ENV MOD_REDIS_VERSION 1.1.3
+RUN curl -sL http://search.maven.org/remotecontent?filepath=io/vertx/mod-redis/$MOD_REDIS_VERSION/mod-redis-$MOD_REDIS_VERSION-mod.zip \
+    -o /usr/share/vert.x-$VERTX_VERSION/sys-mods/mod-redis-mod.zip && \
+    chmod 755 /usr/share/vert.x-$VERTX_VERSION/sys-mods/mod-redis-mod.zip
+
+COPY redis-conf.json /usr/lib/vertx/rest-storage-redis-conf.json
 
 RUN useradd -ms /bin/bash reststorage
 USER reststorage
@@ -15,4 +24,4 @@ WORKDIR /home/reststorage
 # the port where the rest-storage will listen on
 EXPOSE 8989
 
-CMD ["vertx", "runzip", "/usr/lib/rest-storage-mod.zip"]
+CMD ["vertx", "runzip", "/usr/lib/vertx/rest-storage-mod.zip"]
